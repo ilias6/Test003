@@ -1,0 +1,121 @@
+
+The original program is very suboptimal due to the following reasons:
+
+    1. The methods GetValue() and SetValue of the ReflectionClass is the program's heaviest operation. Instead of 
+    calling it 1000 times for each object we have in out list, we can just call it once for each. This is achieved by
+    doing the calculation in the for loop and call the GetValue and SetValue before and after the loop respectively.
+    
+    2. Unnecessary object constructions: 
+    Random should be initialized only once and then just call its Next() method.
+    The commands: new Vector3(10, 0, 0) and new Quaternion(10, 0, 10, 0) will always create and return the same object
+    so what is the point of creating different ones just for read purposes? The answer is none.
+
+Making these optimizations, as we can see below, reduces the total execution time of the program from ~14 seconds to 
+under a second (~0.06s)
+
+
+---------------------------------------------- PROCESSOR SPECS ---------------------------------------------------------
+
+These are the specs of the processor used (content of /proc/cpuinfo):
+    processor	: 0
+    vendor_id	: GenuineIntel
+    cpu family	: 6
+    model		: 167
+    model name	: 11th Gen Intel(R) Core(TM) i7-11700K @ 3.60GHz
+    stepping	: 1
+    microcode	: 0x5d
+    cpu MHz		: 4600.000
+    cache size	: 16384 KB
+    physical id	: 0
+    siblings	: 16
+    core id		: 0
+    cpu cores	: 8
+    apicid		: 0
+    initial apicid	: 0
+    fpu		: yes
+    fpu_exception	: yes
+    cpuid level	: 27
+    wp		: yes
+    bogomips	: 7200.00
+    clflush size	: 64
+    cache_alignment	: 64
+    address sizes	: 39 bits physical, 48 bits virtual
+    
+-------------------------------------------- END PROCESSOR SPECS -------------------------------------------------------
+
+
+
+The following reports are exported from dotTrace Profiler:
+
+----------------------------------------- START OF REPORT ORIGINAL -----------------------------------------------------
+
+  100%   All Calls  •  42,154 ms
+    33.3%   Main  •  14,037 ms  •  Test003.Program.Main(String[])
+      22.5%   SetValue  •  9,498 ms  •  Test003.ReflectionClass`1.SetValue(String, Object)
+        20.3%   GetAllFields  •  8,561 ms  •  Test003.ReflectionClass`1.GetAllFields(Type)
+          16.2%   [Unknown]  •  6,808 ms
+          3.68%   GetFields  •  1,551 ms  •  System.Type.GetFields()
+          0.19%   AddWithResize  •  79 ms  •  System.Collections.Generic.List`1.AddWithResize(T)
+          0.12%   ProfilerAllocSmall  •  48 ms  •  object.ProfilerAllocSmall(intptr, intptr)
+          0.04%   List`1..ctor  •  18 ms  •  System.Collections.Generic.List`1..ctor()
+          <0.01%   [GC Wait]  •  1.5 ms
+        1.83%   SetValue  •  772 ms  •  System.Reflection.FieldInfo.SetValue(Object, Object)
+        0.22%   op_Equality  •  94 ms  •  System.String.op_Equality(String, String)
+        0.05%   get_Item  •  19 ms  •  System.Collections.Generic.List`1.get_Item(Int32)
+        <0.01%   [GC Wait]  •  0.05 ms
+      6.24%   GetValue  •  2,632 ms  •  Test003.ReflectionClass`1.GetValue(String)
+        4.11%   GetAllFields  •  1,733 ms  •  Test003.ReflectionClass`1.GetAllFields(Type)
+          3.62%   GetFields  •  1,525 ms  •  System.Type.GetFields()
+          0.19%   AddWithResize  •  81 ms  •  System.Collections.Generic.List`1.AddWithResize(T)
+          0.08%   ProfilerAllocSmall  •  32 ms  •  object.ProfilerAllocSmall(intptr, intptr)
+          0.07%   List`1..ctor  •  28 ms  •  System.Collections.Generic.List`1..ctor()
+          0.01%   [GC Wait]  •  4.2 ms
+        1.75%   GetValue  •  736 ms  •  System.Reflection.RuntimeFieldInfo.GetValue(Object)
+        0.18%   op_Equality  •  77 ms  •  System.String.op_Equality(String, String)
+        0.04%   get_Item  •  17 ms  •  System.Collections.Generic.List`1.get_Item(Int32)
+        0.01%   get_Count  •  4.4 ms  •  System.Collections.Generic.List`1.get_Count()
+        <0.01%   GetValueInternal  •  2.7 ms  •  System.Reflection.RuntimeFieldInfo.GetValueInternal(RuntimeFieldInfo, object)
+        <0.01%   GetParentType  •  2.2 ms  •  System.Reflection.RuntimeFieldInfo.GetParentType(RuntimeFieldInfo, bool)
+        <0.01%   IsGenericVariable  •  0.5 ms  •  System.RuntimeTypeHandle.IsGenericVariable(RuntimeType)
+        <0.01%   [GC Wait]  •  0.02 ms
+      3.97%   Random..ctor  •  1,675 ms  •  System.Random..ctor()
+      0.23%   ProfilerAllocSmall  •  97 ms  •  object.ProfilerAllocSmall(intptr, intptr)
+      0.20%   [Unknown]  •  84 ms
+      0.01%   get_Item  •  4.7 ms  •  System.Collections.Generic.List`1.get_Item(Int32)
+      <0.01%   op_Addition  •  3.7 ms  •  System.Numerics.Vector3.op_Addition(Vector3, Vector3)
+      <0.01%   Quaternion..ctor  •  2.1 ms  •  System.Numerics.Quaternion..ctor(Single, Single, Single, Single)
+      <0.01%   Vector3..ctor  •  1.6 ms  •  System.Numerics.Vector3..ctor(Single, Single, Single)
+      <0.01%   op_Addition  •  1.1 ms  •  System.Numerics.Quaternion.op_Addition(Quaternion, Quaternion)
+      <0.01%   [GC Wait]  •  0.8 ms
+    <0.01%   GetValue  •  1.1 ms  •  Test003.ReflectionClass`1.GetValue(String)
+    ► <0.01%   GetAllFields  •  1.1 ms  •  Test003.ReflectionClass`1.GetAllFields(Type)
+    <0.01%   GetAllFields  •  0.5 ms  •  Test003.ReflectionClass`1.GetAllFields(Type)
+      <0.01%   GetFields  •  0.5 ms  •  System.Type.GetFields()
+
+------------------------------------------ END OF REPORT ORIGINAL ------------------------------------------------------
+
+
+----------------------------------------- START OF REPORT OPTIMIZED ----------------------------------------------------
+
+  100%   All Calls  •  159 ms
+    37.2%   Main  •  59 ms  •  Test003.Program.Main(String[])
+      4.37%   GetValue  •  6.9 ms  •  Test003.ReflectionClass`1.GetValue(String)
+        4.37%   GetAllFields  •  6.9 ms  •  Test003.ReflectionClass`1.GetAllFields(Type)
+          4.37%   GetFields  •  6.9 ms  •  System.Type.GetFields()
+            4.37%   GetFields  •  6.9 ms  •  System.RuntimeType.GetFields(BindingFlags)
+              4.37%   GetFieldCandidates  •  6.9 ms  •  System.RuntimeType.GetFieldCandidates(String, BindingFlags, Boolean)
+                1.25%   ProfilerAllocVector  •  2.0 ms  •  object.ProfilerAllocVector(intptr, intptr)
+              ► 0.91%   CultureInfo..cctor  •  1.4 ms  •  System.Globalization.CultureInfo..cctor()
+              ► 0.59%   Add  •  0.9 ms  •  System.RuntimeType+ListBuilder`1.Add(T)
+              ► 0.40%   GetFields_internal  •  0.6 ms  •  System.RuntimeType.GetFields_internal(String, BindingFlags, MemberListType, RuntimeType)
+          <0.01%   AddWithResize  •  0.000002 ms  •  System.Collections.Generic.List`1.AddWithResize(T)
+        <0.01%   GetValue  •  0.000001 ms  •  System.Reflection.RuntimeFieldInfo.GetValue(Object)
+      4.12%   op_Addition  •  6.5 ms  •  System.Numerics.Vector3.op_Addition(Vector3, Vector3)
+      3.10%   SetValue  •  4.9 ms  •  Test003.ReflectionClass`1.SetValue(String, Object)
+        2.04%   GetAllFields  •  3.2 ms  •  Test003.ReflectionClass`1.GetAllFields(Type)
+          2.04%   GetFields  •  3.2 ms  •  System.Type.GetFields()
+          <0.01%   AddWithResize  •  0.000003 ms  •  System.Collections.Generic.List`1.AddWithResize(T)
+        0.40%   SetValue  •  0.6 ms  •  System.Reflection.FieldInfo.SetValue(Object, Object)
+      2.31%   op_Addition  •  3.7 ms  •  System.Numerics.Quaternion.op_Addition(Quaternion, Quaternion)
+
+------------------------------------------ END OF REPORT OPTIMIZED -----------------------------------------------------

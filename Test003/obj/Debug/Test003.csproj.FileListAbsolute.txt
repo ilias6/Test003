@@ -1,0 +1,6 @@
+/home/luna/Downloads/Test003 - Optimization/Test003/bin/Debug/Test003.exe
+/home/luna/Downloads/Test003 - Optimization/Test003/bin/Debug/Test003.pdb
+/home/luna/Downloads/Test003 - Optimization/Test003/obj/Debug/Test003.csproj.AssemblyReference.cache
+/home/luna/Downloads/Test003 - Optimization/Test003/obj/Debug/Test003.csproj.CoreCompileInputs.cache
+/home/luna/Downloads/Test003 - Optimization/Test003/obj/Debug/Test003.exe
+/home/luna/Downloads/Test003 - Optimization/Test003/obj/Debug/Test003.pdb
